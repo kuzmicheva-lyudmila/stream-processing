@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-service-config
+data:
+  contact-points: {{ .Values.cassandra.contactPoints }}
+  port: "{{ .Values.cassandra.service.port }}"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: auth-service-secret
+type: Opaque
+data:
+  username: {{ .Values.appCassandra.user | b64enc | quote }}
+  password: {{ .Values.appCassandra.password | b64enc | quote }}

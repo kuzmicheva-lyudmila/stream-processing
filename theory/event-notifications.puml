@@ -1,0 +1,64 @@
+@startuml
+actor Client
+participant "Message broker" as MessageBroker
+participant Auth
+participant User
+participant Order
+participant Billing
+participant Notification
+
+Client -> Auth: post /auth/signup
+    activate Auth
+    Auth -> MessageBroker: publish RegistrationRequested {Client}
+    activate MessageBroker
+    Auth --> Client: 200 OK
+    deactivate Auth
+
+    MessageBroker --> User: consume
+    MessageBroker --> Billing: consume
+    deactivate MessageBroker
+
+Client -> Auth: post /auth/signin
+    activate Auth
+    Auth --> Client: token
+    deactivate Auth
+
+Client -> Billing: post /billing/increase-balance
+    activate Billing
+    Billing --> Client: 200 OK
+    deactivate Billing
+
+Client -> Order: post /orders
+    activate Order
+    Order -> MessageBroker: publish OrderCreated {OrderId}
+    activate MessageBroker
+    Order --> Client: 200 OK
+    deactivate Order
+
+    MessageBroker --> Billing: consume
+        deactivate MessageBroker
+        activate Billing
+        Billing -> Order: get /orders/{OrderId}
+        activate Order
+        Order --> Billing: amount
+        deactivate Order
+        Billing -> MessageBroker: publish OrderProcessed {OrderId}
+        deactivate Billing
+        activate MessageBroker
+
+    MessageBroker --> Order: consume
+        activate Order
+        Order -> Billing: get /billing/{OrderId}
+        activate Billing
+        Billing --> Order: status
+        deactivate Billing
+        deactivate Order
+    MessageBroker --> Notification: consume
+        activate Notification
+        Notification -> Billing: get /billing/{OrderId}
+        activate Billing
+        Billing --> Notification: status
+        deactivate Billing
+        deactivate Notification
+    deactivate MessageBroker
+@enduml

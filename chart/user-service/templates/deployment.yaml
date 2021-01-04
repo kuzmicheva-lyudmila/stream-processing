@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "user-service.fullname" . }}
+  labels:
+  {{- include "user-service.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+  {{- include "user-service.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+    {{- include "user-service.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image }}:{{ .Chart.AppVersion }}"
+        env:
+        - name: spring.data.cassandra.contact-points
+          valueFrom:
+            configMapKeyRef:
+              name: user-service-config
+              key: contact-points
+        - name: spring.data.cassandra.username
+          valueFrom:
+            secretKeyRef:
+              name: user-service-secret
+              key: username
+        - name: spring.data.cassandra.password
+          valueFrom:
+            secretKeyRef:
+              name: user-service-secret
+              key: password
+        ports:
+        - name: {{ .Values.service.targetPort }}
+          containerPort: 8081
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081

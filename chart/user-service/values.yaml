@@ -1,0 +1,23 @@
+replicaCount: 1
+
+image: lkuzmicheva/user-service
+
+service:
+  type: ClusterIP
+  port: 9001
+  targetPort: web
+
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: $1
+    nginx.ingress.kubernetes.io/auth-url: "http://auth-service.myapp.svc.cluster.local:9000/auth"
+    nginx.ingress.kubernetes.io/auth-response-headers: "X-Auth-Client,X-Auth-Roles"
+  hosts:
+  - host: arch.homework
+    paths: ["/otusapp/kuzmicheva(/users/.*|/users$)"]
+
+cassandra:
+  user: user_service
+  password: user_service
+  contactPoints: cassandra

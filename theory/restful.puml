@@ -1,0 +1,29 @@
+@startuml
+autoactivate on
+actor Client
+participant Auth
+participant User
+participant Order
+participant Billing
+participant Notification
+
+Client -> Auth: post /auth/signup
+    Auth -> User: put /users
+    User --> Auth: 200 OK
+    Auth -> Billing: put /billing
+    Billing --> Auth: 200 OK
+Auth --> Client: 200 OK
+
+Client -> Auth: post /auth/signin
+Auth --> Client: token
+
+Client -> Billing: post /billing/increase-balance
+Billing --> Client: 200 OK
+
+Client -> Order: post /orders
+    Order -> Billing: post /billing/reduce-balance
+    Billing --> Order: success/failure
+    Order -> Notification: post /notifications
+    Notification --> Order
+Order --> Client: 200 OK
+@enduml

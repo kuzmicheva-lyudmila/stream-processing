@@ -1,0 +1,18 @@
+spring:
+  data:
+    cassandra:
+      port: 9042
+      contact-points: localhost
+      local-datacenter: datacenter1
+      keyspace-name: auth_service
+      username: auth_service
+      password: auth_service
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+userservice:
+  url: http://localhost:8081

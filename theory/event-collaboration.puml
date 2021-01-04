@@ -1,0 +1,51 @@
+@startuml
+autoactivate on
+actor Client
+participant Gateway
+participant "Message broker" as MessageBroker
+participant Auth
+participant User
+participant Order
+participant Billing
+participant Notification
+
+Client -> Gateway: post /auth/signup
+    Gateway -> MessageBroker: publish RegistrationRequested
+    MessageBroker --> Auth: consume
+    Auth -> MessageBroker: publish UserCreated
+    MessageBroker --> Gateway: consume
+    MessageBroker --> User: consume
+    MessageBroker --> Billing: consume
+    MessageBroker --> Notification: consume
+    Gateway --> Client: 200 Ok
+
+Client -> Gateway: post /auth/signin
+    Gateway -> MessageBroker: publish UserSignIn
+    MessageBroker --> Auth: consume
+    Auth -> MessageBroker: publish TokenCreated
+    MessageBroker --> Gateway: consume
+    Gateway --> Client: Token
+
+Client -> Gateway: post /billing/increase-balance
+    Gateway -> MessageBroker: publish BalanceIncreased
+    MessageBroker --> Billing: consume
+    Billing -> MessageBroker: publish UpdatedBalance
+    MessageBroker --> Gateway: consume
+    Gateway --> Client: 200 OK
+
+Client -> Gateway: post /orders
+    Gateway -> MessageBroker: publish OrderRegistered
+    MessageBroker --> Order: consume
+    Order -> MessageBroker: publish OrderCreated
+    MessageBroker --> Gateway: consume
+    MessageBroker --> Billing: consume
+    Gateway --> Client: 200 OK
+
+    alt
+    Billing -> MessageBroker: publish BalanceReduced
+    MessageBroker --> Notification: consume
+    else
+    Billing -> MessageBroker: publish OrderCancelled
+    MessageBroker --> Notification: consume
+    end
+@enduml
