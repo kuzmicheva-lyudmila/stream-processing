@@ -40,7 +40,7 @@ Client -> Order: post /orders
         activate Billing
         Billing -> Order: get /orders/{OrderId}
         activate Order
-        Order --> Billing: amount
+        Order --> Billing: OrderInfo
         deactivate Order
         Billing -> MessageBroker: publish OrderProcessed {OrderId}
         deactivate Billing

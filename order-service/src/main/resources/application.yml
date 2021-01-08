@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8083
 
 spring:
   data:
@@ -7,9 +7,9 @@ spring:
       port: 9042
       contact-points: localhost
       local-datacenter: datacenter1
-      keyspace-name: user_service
-      username: user_service
-      password: user_service
+      keyspace-name: order_service
+      username: order_service
+      password: order_service
 
 management:
   endpoint:

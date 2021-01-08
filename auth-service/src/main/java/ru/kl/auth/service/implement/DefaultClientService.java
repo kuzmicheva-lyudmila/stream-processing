@@ -1,6 +1,6 @@
 package ru.kl.auth.service.implement;
 
-import org.springframework.http.HttpHeaders;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,6 +13,7 @@ import ru.kl.auth.repository.ClientRepository;
 import ru.kl.auth.service.ClientService;
 
 @Service
+@Slf4j
 public class DefaultClientService implements ClientService {
 
     private final ClientRepository clientRepository;
@@ -24,7 +25,6 @@ public class DefaultClientService implements ClientService {
 
         this.userServiceClient = WebClient.builder()
                 .baseUrl(properties.getUrl())
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeader(Headers.AUTH_ROLES_HEADER_NAME, Role.ADMIN.name())
                 .build();
     }
@@ -42,9 +42,12 @@ public class DefaultClientService implements ClientService {
     private Mono<Void> registerUser(String client) {
         return userServiceClient.put()
                 .uri("/users")
+                .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(client)
-                .exchange()
-                //.bodyToMono(String.class)
+                .retrieve()
+                .bodyToMono(String.class)
+                .doOnSuccess(response -> log.info("User: {}", response))
+                .doOnError(error -> log.error("Error: ", error))
                 .then();
     }
 }
