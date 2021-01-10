@@ -9,7 +9,7 @@ participant Notification
 
 Client -> Auth: post /auth/signup
     activate Auth
-    Auth -> MessageBroker: publish RegistrationRequested {Client}
+    Auth -> MessageBroker: publish UserRegistered {Client}
     activate MessageBroker
     Auth --> Client: 200 OK
     deactivate Auth
@@ -23,7 +23,7 @@ Client -> Auth: post /auth/signin
     Auth --> Client: token
     deactivate Auth
 
-Client -> Billing: post /billing/increase-balance
+Client -> Billing: post /billing/increase
     activate Billing
     Billing --> Client: 200 OK
     deactivate Billing

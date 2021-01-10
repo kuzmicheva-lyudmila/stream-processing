@@ -1,0 +1,55 @@
+asyncapi: 2.0.0
+info:
+  title: stream processing
+  version: '0.1.0'
+defaultContentType: application/json
+
+channels:
+  auth-service/userRegistered:
+    publish:
+      message:
+        tags:
+          - name: users
+        name: userRegistered
+        title: registers a new client
+        payload:
+          type: object
+          properties:
+            id:
+              type: string
+          required:
+            - id
+  order-service/orderCreated:
+    publish:
+      message:
+        tags:
+          - name: orders
+        name: orderCreated
+        title: creates a new order
+        payload:
+          type: object
+          headers:
+            client:
+              type: string
+          properties:
+            id:
+              type: string
+          required:
+            - id
+  biling-service/orderProcessed:
+    publish:
+      message:
+        tags:
+          - name: bills
+        name: orderProcessed
+        title: processes the order
+        payload:
+          type: object
+          headers:
+            client:
+              type: string
+          properties:
+            id:
+              type: string
+          required:
+            - id

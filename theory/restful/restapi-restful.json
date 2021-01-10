@@ -1,0 +1,473 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "stream processing",
+    "description": "https://app.swaggerhub.com/apis/kuzmicheva-lyudmila/stream-processing/0.1.0",
+    "contact": {
+      "email": "kuzmicheva.lyudmila@gmail.com"
+    },
+    "version": "0.1.0"
+  },
+  "tags": [
+    {
+      "name": "public-api",
+      "description": "public api with authentication"
+    },
+    {
+      "name": "auth",
+      "description": "authentication service"
+    },
+    {
+      "name": "user",
+      "description": "user service"
+    },
+    {
+      "name": "order",
+      "description": "order service"
+    },
+    {
+      "name": "billing",
+      "description": "billing service"
+    },
+    {
+      "name": "notification",
+      "description": "notification service"
+    }
+  ],
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "tags": [
+          "public-api"
+        ],
+        "summary": "registers a new client",
+        "operationId": "postAuthSignUp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "500": {
+            "description": "internal error"
+          }
+        }
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "tags": [
+          "public-api"
+        ],
+        "summary": "logins to app and get token",
+        "operationId": "postAuthSignIn",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "500": {
+            "description": "internal error"
+          }
+        }
+      }
+    },
+    "/billing/increase": {
+      "post": {
+        "tags": [
+          "public-api"
+        ],
+        "summary": "increases bill balance",
+        "operationId": "postBillingIncrease",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "500": {
+            "description": "internal error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/orders": {
+      "post": {
+        "tags": [
+          "public-api"
+        ],
+        "summary": "creates order",
+        "operationId": "postOrder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "500": {
+            "description": "internal error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/auth": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "checks token and gets X-Auth-Client and X-Auth-Roles at response",
+        "operationId": "getAuth",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {
+              "X-Auth-Client": {
+                "description": "client id",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Auth-Roles": {
+                "description": "set of client roles",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized"
+          },
+          "500": {
+            "description": "internal error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users": {
+      "put": {
+        "tags": [
+          "user"
+        ],
+        "summary": "creates user",
+        "operationId": "putUser",
+        "parameters": [
+          {
+            "name": "X-Auth-Roles",
+            "in": "header",
+            "description": "set of client roles",
+            "required": false,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "500": {
+            "description": "internal error"
+          }
+        }
+      }
+    },
+    "/billing/decrease": {
+      "post": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "decreases bill balance",
+        "operationId": "postBillingDecrease",
+        "parameters": [
+          {
+            "name": "X-Auth-Client",
+            "in": "header",
+            "description": "sclient id",
+            "required": false,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingDecreaseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "500": {
+            "description": "internal error"
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "post": {
+        "tags": [
+          "notification"
+        ],
+        "summary": "notifices client",
+        "operationId": "postNotification",
+        "parameters": [
+          {
+            "name": "X-Auth-Client",
+            "in": "header",
+            "description": "sclient id",
+            "required": false,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Event"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "500": {
+            "description": "internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthRequest": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          }
+        }
+      },
+      "AuthResponse": {
+        "required": [
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "format": "byte"
+          }
+        }
+      },
+      "OrderDetails": {
+        "required": [
+          "amount",
+          "clientId",
+          "id",
+          "insTime"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "insTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "User": {
+        "required": [
+          "client"
+        ],
+        "type": "object",
+        "properties": {
+          "client": {
+            "type": "string"
+          },
+          "fullname": {
+            "type": "string"
+          }
+        }
+      },
+      "BillingDecreaseRequest": {
+        "required": [
+          "amount",
+          "orderId"
+        ],
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "failure"
+            ]
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

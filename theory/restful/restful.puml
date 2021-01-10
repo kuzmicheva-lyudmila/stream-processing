@@ -17,11 +17,11 @@ Auth --> Client: 200 OK
 Client -> Auth: post /auth/signin
 Auth --> Client: token
 
-Client -> Billing: post /billing/increase-balance
+Client -> Billing: post /billing/increase
 Billing --> Client: 200 OK
 
 Client -> Order: post /orders
-    Order -> Billing: post /billing/reduce-balance
+    Order -> Billing: post /billing/decrease
     Billing --> Order: success/failure
     Order -> Notification: post /notifications
     Notification --> Order

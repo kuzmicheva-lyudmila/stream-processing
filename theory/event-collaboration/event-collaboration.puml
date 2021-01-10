@@ -10,7 +10,7 @@ participant Billing
 participant Notification
 
 Client -> Gateway: post /auth/signup
-    Gateway -> MessageBroker: publish RegistrationRequested
+    Gateway -> MessageBroker: publish UserRegistered
     MessageBroker --> Auth: consume
     Auth -> MessageBroker: publish UserCreated
     MessageBroker --> Gateway: consume
@@ -29,7 +29,7 @@ Client -> Gateway: post /auth/signin
 Client -> Gateway: post /billing/increase-balance
     Gateway -> MessageBroker: publish BalanceIncreased
     MessageBroker --> Billing: consume
-    Billing -> MessageBroker: publish UpdatedBalance
+    Billing -> MessageBroker: publish BalanceUpdated
     MessageBroker --> Gateway: consume
     Gateway --> Client: 200 OK
 
@@ -41,11 +41,7 @@ Client -> Gateway: post /orders
     MessageBroker --> Billing: consume
     Gateway --> Client: 200 OK
 
-    alt
-    Billing -> MessageBroker: publish BalanceReduced
+    Billing -> MessageBroker: publish OrderProcessed
     MessageBroker --> Notification: consume
-    else
-    Billing -> MessageBroker: publish OrderCancelled
-    MessageBroker --> Notification: consume
-    end
+    Billing -> MessageBroker: publish BalanceUpdated
 @enduml

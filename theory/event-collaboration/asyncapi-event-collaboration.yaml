@@ -1,0 +1,143 @@
+asyncapi: 2.0.0
+info:
+  title: stream processing
+  version: '0.1.0'
+defaultContentType: application/json
+
+channels:
+  gateway/userRegistered:
+    publish:
+      message:
+        tags:
+          - name: users
+        name: userRegistered
+        title: registers a new client
+        payload:
+          type: object
+          properties:
+            id:
+              type: string
+            password:
+              type: string
+            fullname:
+              type: string
+            email:
+              type: string
+          required:
+            - id
+            - password
+            - email
+  auth-service/userCreated:
+    publish:
+      message:
+        tags:
+          - name: users
+        name: userCreated
+        title: creates a new client
+        payload:
+          type: object
+          properties:
+            id:
+              type: string
+            fullname:
+              type: string
+            email:
+              type: string
+          required:
+            - id
+            - email
+  gateway/balanceIncreased:
+    publish:
+      message:
+        tags:
+          - name: bills
+        name: balanceIncreased
+        title: increases a bill
+        payload:
+          type: object
+          headers:
+            client:
+              type: string
+          properties:
+            amount:
+              type: integer
+              format: int64
+          required:
+            - amount
+  billing-service/balanceUpdated:
+    publish:
+      message:
+        tags:
+          - name: bills
+        name: balanceUpdated
+        title: updates bill balance
+        payload:
+          type: object
+          headers:
+            client:
+              type: string
+          properties:
+            amount:
+              type: integer
+              format: int64
+          required:
+            - id
+            - amount
+  gateway/orderRegistered:
+    publish:
+      message:
+        tags:
+          - name: orders
+        name: orderRegistered
+        title: registered a order
+        payload:
+          type: object
+          headers:
+            client:
+              type: string
+          properties:
+            id:
+              type: string
+            amount:
+              type: integer
+              format: int64
+          required:
+            - id
+            - amount
+  order-service/orderCreated:
+    publish:
+      message:
+        tags:
+          - name: orders
+        name: orderCreated
+        title: creates a new order
+        payload:
+          type: object
+          headers:
+            client:
+              type: string
+          properties:
+            id:
+              type: string
+          required:
+            - id
+  biling-service/orderProcessed:
+    publish:
+      message:
+        tags:
+          - name: orders
+        name: orderProcessed
+        title: processes the order
+        payload:
+          type: object
+          headers:
+            client:
+              type: string
+          properties:
+            id:
+              type: string
+            status:
+              type: string
+          required:
+            - id
+            - status
