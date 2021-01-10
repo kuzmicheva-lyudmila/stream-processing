@@ -1,10 +1,10 @@
 replicaCount: 1
 
-image: lkuzmicheva/user-service
+image: lkuzmicheva/order-service
 
 service:
   type: ClusterIP
-  port: 9001
+  port: 9003
   targetPort: web
 
 ingress:
@@ -15,11 +15,11 @@ ingress:
     nginx.ingress.kubernetes.io/auth-response-headers: "X-Auth-Client,X-Auth-Roles"
   hosts:
   - host: arch.homework
-    paths: ["/otusapp/kuzmicheva(/users/.*|/users$)"]
+    paths: ["/otusapp/kuzmicheva(/orders/.*|/orders$)"]
 
 cassandra:
-  user: user_service
-  password: user_service
+  user: order_service
+  password: order_service
   contactPoints: cassandra
 
 kafka:

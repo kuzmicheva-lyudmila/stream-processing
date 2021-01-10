@@ -2,7 +2,7 @@ create keyspace if not exists order_service with replication = { 'class' : 'Simp
 create user order_service with password 'order_service' nosuperuser;
 grant all permissions on keyspace order_service to order_service;
 
-create table if not exists order_service.order
+create table if not exists order_service.order_details
 (
     id UUID,
     client_id text,

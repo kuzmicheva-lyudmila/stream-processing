@@ -1,4 +1,4 @@
-replicaCount: 2
+replicaCount: 1
 
 image: lkuzmicheva/auth-service
 
@@ -16,21 +16,9 @@ ingress:
       paths: ["/otusapp/kuzmicheva(/auth/.*|/auth$)"]
 
 cassandra:
-  enabled: true
-  fullnameOverride: cassandra
-  service:
-    port: 9042
-  dbUser:
-    user: cassandra
-    password: cassandra
-  cluster:
-    datacenter: dc1
-  initDBConfigMap: init-db
-  contactPoints: cassandra
-
-appCassandra:
   user: auth_service
   password: auth_service
+  contactPoints: cassandra
 
 userservice:
-  url: http://user-service.myapp.svc.cluster.local:9001
+  url: "http://user-service.myapp.svc.cluster.local:9001"

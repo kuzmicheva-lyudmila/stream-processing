@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "user-service.fullname" . }}
+  name: {{ include "order-service.fullname" . }}
   labels:
-  {{- include "user-service.labels" . | nindent 4 }}
+  {{- include "order-service.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-  {{- include "user-service.selectorLabels" . | nindent 6 }}
+  {{- include "order-service.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-    {{- include "user-service.selectorLabels" . | nindent 8 }}
+    {{- include "order-service.selectorLabels" . | nindent 8 }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
@@ -21,28 +21,28 @@ spec:
         - name: spring.data.cassandra.contact-points
           valueFrom:
             configMapKeyRef:
-              name: user-service-config
+              name: order-service-config
               key: contact-points
         - name: spring.data.cassandra.username
           valueFrom:
             secretKeyRef:
-              name: user-service-secret
+              name: order-service-secret
               key: username
         - name: spring.data.cassandra.password
           valueFrom:
             secretKeyRef:
-              name: user-service-secret
+              name: order-service-secret
               key: password
         - name: kafka.bootstrap-address
           value: {{ .Values.kafka.bootstrapAddress }}
         ports:
         - name: {{ .Values.service.targetPort }}
-          containerPort: 8081
+          containerPort: 8083
         livenessProbe:
           httpGet:
             path: /actuator/health
-            port: 8081
+            port: 8083
         readinessProbe:
           httpGet:
             path: /actuator/health
-            port: 8081
+            port: 8083

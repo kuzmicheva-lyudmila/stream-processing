@@ -1,10 +1,10 @@
 replicaCount: 1
 
-image: lkuzmicheva/user-service
+image: lkuzmicheva/billing-service
 
 service:
   type: ClusterIP
-  port: 9001
+  port: 9002
   targetPort: web
 
 ingress:
@@ -14,13 +14,13 @@ ingress:
     nginx.ingress.kubernetes.io/auth-url: "http://auth-service.myapp.svc.cluster.local:9000/auth"
     nginx.ingress.kubernetes.io/auth-response-headers: "X-Auth-Client,X-Auth-Roles"
   hosts:
-  - host: arch.homework
-    paths: ["/otusapp/kuzmicheva(/users/.*|/users$)"]
+    - host: arch.homework
+      paths: ["/otusapp/kuzmicheva(/billing/.*|/billing$)"]
 
-cassandra:
-  user: user_service
-  password: user_service
-  contactPoints: cassandra
+postgresql:
+  url: jdbc:postgresql://postgresql:5432/postgres
+  username: postgres
+  password: postgres
 
 kafka:
   bootstrapAddress: "http://kafka.myapp.svc.cluster.local:9092"

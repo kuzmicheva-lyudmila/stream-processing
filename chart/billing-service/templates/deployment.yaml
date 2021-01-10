@@ -1,48 +1,45 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "user-service.fullname" . }}
+  name: {{ include "billing-service.fullname" . }}
   labels:
-  {{- include "user-service.labels" . | nindent 4 }}
+  {{- include "billing-service.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-  {{- include "user-service.selectorLabels" . | nindent 6 }}
+  {{- include "billing-service.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-    {{- include "user-service.selectorLabels" . | nindent 8 }}
+    {{- include "billing-service.selectorLabels" . | nindent 8 }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image }}:{{ .Chart.AppVersion }}"
         env:
-        - name: spring.data.cassandra.contact-points
-          valueFrom:
-            configMapKeyRef:
-              name: user-service-config
-              key: contact-points
-        - name: spring.data.cassandra.username
+        - name: spring.datasource.username
           valueFrom:
             secretKeyRef:
-              name: user-service-secret
+              name: billing-service-secret
               key: username
-        - name: spring.data.cassandra.password
+        - name: spring.datasource.password
           valueFrom:
             secretKeyRef:
-              name: user-service-secret
+              name: billing-service-secret
               key: password
+        - name: spring.datasource.url
+          value: {{ .Values.postgresql.url }}
         - name: kafka.bootstrap-address
           value: {{ .Values.kafka.bootstrapAddress }}
         ports:
         - name: {{ .Values.service.targetPort }}
-          containerPort: 8081
+          containerPort: 8082
         livenessProbe:
           httpGet:
             path: /actuator/health
-            port: 8081
+            port: 8082
         readinessProbe:
           httpGet:
             path: /actuator/health
-            port: 8081
+            port: 8082

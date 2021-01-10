@@ -1,0 +1,9 @@
+fullnameOverride: cassandra
+service:
+  port: 9042
+dbUser:
+  user: cassandra
+  password: cassandra
+cluster:
+  datacenter: dc1
+contactPoints: cassandra
